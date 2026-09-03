@@ -1,0 +1,12 @@
+[project]
+name = "timesheet"
+version = "0.1.0"
+description = "Kimai timesheet export/sync scripts"
+requires-python = ">=3.11"
+dependencies = [
+    "google-api-python-client",
+    "google-auth",
+]
+
+[tool.uv]
+package = false

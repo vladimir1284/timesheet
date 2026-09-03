@@ -8,21 +8,25 @@ Single-script tool that exports Kimai timesheet entries for one month to CSV. Fi
 
 ## Commands
 
+Env/deps managed with [uv](https://docs.astral.sh/uv/); `pyproject.toml` + `uv.lock` are the source of truth (`.venv` is not committed).
+
 Setup:
 ```
+uv sync
 cp .env.example .env
 # fill in KIMAI_URL, KIMAI_USER, KIMAI_TOKEN
 ```
 
 Run:
 ```
-python3 kimai_export.py [YYYY-MM] [output.csv]
+uv run kimai_export.py [YYYY-MM] [output.csv]
+uv run kimai_to_sheet.py [YYYY-MM]
 ```
 - `.env` is loaded automatically by the script (`load_dotenv`); no need to `source` it. Real env vars, if already set, take precedence.
 - `YYYY-MM` optional, defaults to the previous calendar month.
 - `output.csv` optional, defaults to `kimai_YYYY-MM.csv`.
 
-There is no build, lint, or test tooling in this repo (no package manager, no test files).
+Add a dependency with `uv add <pkg>`; there is no lint or test tooling in this repo (no test files).
 
 ## Architecture
 
