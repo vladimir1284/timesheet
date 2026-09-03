@@ -2,3 +2,6 @@
 *.csv
 __pycache__/
 *.pyc
+translate-chatwoot-441813-383a212888db.json
+.venv/
+rates.json
