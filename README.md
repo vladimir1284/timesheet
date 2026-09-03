@@ -14,9 +14,10 @@ Auth uses a Kimai API token (Profile > API access token in the Kimai UI), sent a
 ## Usage
 
 ```
-set -a && source .env && set +a
 python3 kimai_export.py [YYYY-MM] [output.csv]
 ```
+
+`.env` is loaded automatically; no need to `source` it first.
 
 - `YYYY-MM` is optional; defaults to the previous calendar month.
 - `output.csv` is optional; defaults to `kimai_YYYY-MM.csv`.

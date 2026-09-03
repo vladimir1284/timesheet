@@ -12,9 +12,15 @@ Env vars required:
   KIMAI_USER   Kimai username tied to the API token
   KIMAI_TOKEN  API token value
 
-Usage:
-  KIMAI_URL=... KIMAI_USER=... KIMAI_TOKEN=... python3 kimai_export.py [YYYY-MM] [output.csv]
+Usage (reads ./.env automatically, no need to source it first):
+  python3 kimai_export.py [YYYY-MM] [output.csv]
   Month arg optional, defaults to previous calendar month.
+  Real env vars, if already set, take precedence over .env.
+
+Fetches timesheets for ALL users (user=all param), not just the token's
+owner. Requires the API user to hold a role with "view other timesheet"
+permission (teamlead/admin) in Kimai -- otherwise Kimai ignores the param
+and returns 403 or only the caller's own entries, depending on version.
 """
 
 import csv
@@ -28,6 +34,20 @@ from calendar import monthrange
 from datetime import datetime
 
 PAGE_SIZE = 100
+
+
+def load_dotenv(path=".env"):
+    if not os.path.isfile(path):
+        return
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, value = line.partition("=")
+            key = key.strip()
+            value = value.strip().strip("'").strip('"')
+            os.environ.setdefault(key, value)
 
 
 def month_bounds(yyyy_mm):
@@ -50,6 +70,7 @@ def fetch_all_timesheets(base_url, user, token, begin, end):
             "orderBy": "begin",
             "order": "ASC",
             "full": "true",
+            "user": "all",
         }
         url = f"{base_url}/api/timesheets?{urllib.parse.urlencode(params)}"
         req = urllib.request.Request(url)
@@ -102,6 +123,7 @@ def previous_month():
 
 
 def main():
+    load_dotenv()
     yyyy_mm = sys.argv[1] if len(sys.argv) > 1 else previous_month()
     try:
         datetime.strptime(yyyy_mm, "%Y-%m")
